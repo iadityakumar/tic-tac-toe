@@ -111,17 +111,26 @@ def getScoreForPos(pos, sym):
     i, j = pos//ticTacSize, pos%ticTacSize
     score = 0    
     if i == ticTacSize//2 or j == ticTacSize//2:
-        score += 20
+        score += 5
     
     updateTicTac(pos, sym)
+    # check if 2 consecutive are formed
+    for i in range(2, ticTacSize):
+        status = gameStatus(i)
+        if not status:
+            score += 0
+        elif status == sym + ' won':
+            score += i*100
+        # elif ' won' in status:
+        #     score -= i*100
 
     status = gameStatus()
     if not status:
         score += 0
     elif status == sym + ' won':
         score += 100000
-    elif ' won' in status:
-        score -= 100000
+    # elif ' won' in status:
+    #     score -= 100000
     elif status:
         score += 1000
     
@@ -141,14 +150,21 @@ def getRandomPos():
 def getPosBasedOnScoreStragedy(p):
     validPoss = getValidPos()
     sym = ticTaxSymbols[p]
+    oopSym = 'X'
     bestPos = validPoss[0]
     bestScore = 0
     for pos in validPoss:
         score = getScoreForPos(pos, sym)
-        print("score", pos, score, sym)
+        # print("score", pos, score, sym)
+        # if score > bestScore:
+        #     bestPos = pos
+        #     bestScore = score
+        score += getScoreForPos(pos, oopSym)
+        # print("score", pos, score, oopSym)
         if score > bestScore:
             bestPos = pos
             bestScore = score
+    print("bestPos", bestPos, bestScore)
     return bestPos
 
 def getInputFromCPUBasedOnScoreStragedy(p):
